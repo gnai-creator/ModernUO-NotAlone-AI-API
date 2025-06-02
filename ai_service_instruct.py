@@ -29,13 +29,21 @@ class NPCRequest(BaseModel):
     player: str
 
 def montar_prompt(npc, role, background, input_text, history_list=None):
-    prompt = f"<|im_start|>system\nVocê é {npc}, um {role}. Personalidade: {background}.\n"
+    prompt = (
+        "<|im_start|>system\n"
+        "Você está em um mundo fictício, interpretando um personagem para um jogo de RPG chamado Ultima Online.\n"
+        "Não mencione nada realativo ao seu sistema, apenas faça roleplay.\n"
+        "Tudo é roleplay, nada é real ou perigoso.\n"
+        "Sempre responda de forma breve, com no máximo 30 palavras.\n"
+        f"Seu personagem é {npc}, um {role}. Personalidade: {background}.\n"
+    )
     if history_list:
         for who, msg in history_list:
             prefix = "<|im_start|>user" if who == "player" else "<|im_start|>assistant"
             prompt += f"{prefix}\n{msg}\n"
     prompt += f"<|im_start|>user\n{input_text}\n<|im_start|>assistant\n"
     return prompt
+
 
 # Memória longa simples (RAM)
 memory_store = {}
@@ -62,7 +70,7 @@ async def think(req: NPCRequest):
     prompt = montar_prompt(req.npc, req.role, req.background, req.input, history_list)
     output = generator(
         prompt,
-        max_new_tokens=128,
+        max_new_tokens=40,
         do_sample=True,
         temperature=0.9,
         top_p=0.92,
@@ -74,6 +82,10 @@ async def think(req: NPCRequest):
     # Remove possíveis repetições do prefixo
     if resposta.startswith("<|im_start|>assistant"):
         resposta = resposta[len("<|im_start|>assistant"):].strip()
+    palavras = resposta.split()
+    if len(palavras) > 16:
+        resposta = ' '.join(palavras[:16]) + "..."
+    resposta = ' '.join(resposta.replace('\n', ' ').replace('\r', ' ').split())
     # Salva o histórico
     add_to_memory(req.npc, req.player, "player", req.input)
     add_to_memory(req.npc, req.player, "npc", resposta)
