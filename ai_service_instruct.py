@@ -3,7 +3,7 @@ from pydantic import BaseModel
 from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
 import torch
 
-MODEL_NAME = "Qwen/Qwen3-1.7B"
+MODEL_NAME = "Qwen/Qwen2.5-1.5B-Instruct"
 
 tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, trust_remote_code=True)
 model = AutoModelForCausalLM.from_pretrained(
@@ -16,13 +16,10 @@ generator = pipeline(
     "text-generation",
     model=model,
     tokenizer=tokenizer,
-    device=0 if torch.cuda.is_available() else -1
+    # device=0 if torch.cuda.is_available() else -1
 )
 
 app = FastAPI()
-
-memory_store = {}
-MEMORY_WINDOW = 10
 
 class NPCRequest(BaseModel):
     npc: str
@@ -32,13 +29,17 @@ class NPCRequest(BaseModel):
     player: str
 
 def montar_prompt(npc, role, background, input_text, history_list=None):
-    prompt = f"{npc} é um {role}. Personalidade: {background}.\n"
+    prompt = f"<|im_start|>system\nVocê é {npc}, um {role}. Personalidade: {background}.\n"
     if history_list:
         for who, msg in history_list:
-            prefix = "Jogador" if who == "player" else npc
-            prompt += f"{prefix}: {msg}\n"
-    prompt += f"Jogador: {input_text}\n{npc}:"
+            prefix = "<|im_start|>user" if who == "player" else "<|im_start|>assistant"
+            prompt += f"{prefix}\n{msg}\n"
+    prompt += f"<|im_start|>user\n{input_text}\n<|im_start|>assistant\n"
     return prompt
+
+# Memória longa simples (RAM)
+memory_store = {}
+MEMORY_WINDOW = 10
 
 def add_to_memory(npc, player, role, text):
     key = (npc, player)
@@ -56,6 +57,7 @@ def get_memory(npc, player):
 
 @app.post("/think")
 async def think(req: NPCRequest):
+    # Resgata histórico
     history_list = get_memory(req.npc, req.player)
     prompt = montar_prompt(req.npc, req.role, req.background, req.input, history_list)
     output = generator(
@@ -69,9 +71,10 @@ async def think(req: NPCRequest):
         pad_token_id=tokenizer.eos_token_id
     )[0]['generated_text']
     resposta = output[len(prompt):].strip()
-    # Limpa caso venha prefixo repetido
-    if resposta.startswith(f"{req.npc}:"):
-        resposta = resposta[len(f"{req.npc}:"):].strip()
+    # Remove possíveis repetições do prefixo
+    if resposta.startswith("<|im_start|>assistant"):
+        resposta = resposta[len("<|im_start|>assistant"):].strip()
+    # Salva o histórico
     add_to_memory(req.npc, req.player, "player", req.input)
     add_to_memory(req.npc, req.player, "npc", resposta)
     return {"action": "Say", "text": resposta}
