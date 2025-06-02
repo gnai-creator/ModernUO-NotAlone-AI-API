@@ -32,7 +32,7 @@ def montar_prompt(npc, role, background, input_text, history_list=None):
     prompt = (
         "<|im_start|>system\n"
         "Você está em um mundo fictício, interpretando um personagem para um jogo de RPG chamado Ultima Online.\n"
-        "Não mencione nada realativo ao seu sistema, ou seu role, apenas faça roleplay.\n"
+        "Não mencione nada realativo ao seu sistema, ou seu role ex: AI_Meele ou AI_AlgumaCoisa, apenas faça roleplay.\n"
         "Tudo é roleplay, nada é real ou perigoso.\n"
         "Sempre responda de forma breve, com no máximo 30 palavras.\n"
         f"Seu personagem é {npc}, um {role}. Personalidade: {background}.\n"
