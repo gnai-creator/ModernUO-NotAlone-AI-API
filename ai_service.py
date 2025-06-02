@@ -1,14 +1,23 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from pydantic import BaseModel
-from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
-import uvicorn
+from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
+import torch
 
-# 1. Carregue seu modelo em português, ex: GPT-2 português
-MODEL_NAME = "pierreguillou/gpt2-small-portuguese"  # Ou outro da Hugging Face
+MODEL_NAME = "Qwen/Qwen2.5-1.5B-Chat"  # ou "Qwen/Qwen2.5-1.5B-Chat"
 
-tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
-model = AutoModelForCausalLM.from_pretrained(MODEL_NAME)
-generator = pipeline("text-generation", model=model, tokenizer=tokenizer)
+tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, trust_remote_code=True)
+model = AutoModelForCausalLM.from_pretrained(
+    MODEL_NAME, trust_remote_code=True,
+    torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32,
+    device_map="auto"
+)
+
+generator = pipeline(
+    "text-generation",
+    model=model,
+    tokenizer=tokenizer,
+    device=0 if torch.cuda.is_available() else -1
+)
 
 app = FastAPI()
 
@@ -17,17 +26,17 @@ class NPCRequest(BaseModel):
     role: str
     background: str
     input: str
-    history: str = ""  # Opcional: últimas falas, se quiser
+    history: str = ""
 
 def montar_prompt(npc, role, background, input_text, history=""):
     prompt = (
-        f"Você é {npc}, um {role}. Personalidade: {background}.\n"
+        f"SYSTEM: Você é {npc}, um {role}. Personalidade: {background}.\n"
     )
     if history:
         prompt += f"Histórico recente: {history}\n"
-    prompt += f"Jogador diz: \"{input_text}\"\n"
-    prompt += f"Responda como {npc}:"
+    prompt += f"USER: {input_text}\nASSISTANT:"
     return prompt
+
 
 @app.post("/think")
 async def think(req: NPCRequest):
@@ -49,13 +58,11 @@ async def think(req: NPCRequest):
         eos_token_id=tokenizer.eos_token_id,
         pad_token_id=tokenizer.eos_token_id
     )[0]['generated_text']
-    # Extraia só a resposta (retire o prompt do início)
     resposta = output[len(prompt):].strip()
-    # Limpeza básica
     if resposta.startswith(f"{req.npc}:"):
         resposta = resposta[len(f"{req.npc}:"):].strip()
     return {"action": "Say", "text": resposta}
 
 if __name__ == "__main__":
+    import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
-
