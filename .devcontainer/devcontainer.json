@@ -56,7 +56,7 @@
     }
   },
   
-  "forwardPorts": [8000, 8888, 6006],
+  "forwardPorts": [10000, 8888, 6006],
   "remoteUser": "root",
   "postCreateCommand": "pip install --no-cache-dir -r requirements.txt"
 }
