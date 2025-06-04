@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from typing import List, Optional
 from transformers import pipeline
-from ai_extract_action import extrair_acao
+from src.ai_extract_action import extrair_acao
 from ai_action_prompt import montar_prompt_para_acao
 
 app = FastAPI()
@@ -29,7 +29,7 @@ class NPCState(BaseModel):
 def next_action(npc: NPCState):
     prompt = montar_prompt_para_acao(npc)
     
-    result = generator(prompt, max_new_tokens=128, do_sample=True, temperature=0.7)[0]['generated_text']
+    result = generator(prompt, max_new_tokens=40, do_sample=True, temperature=0.7)[0]['generated_text']
 
     # Extração simples dos campos (pode ser melhorado com regex/json)
     parsed = extrair_acao(result)

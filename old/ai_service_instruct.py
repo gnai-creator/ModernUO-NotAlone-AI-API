@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
 import torch
-MODEL_NAME = "Qwen/Qwen2.5-1.5B-Instruct"
+MODEL_NAME = "mistralai/Mistral-7B-Instruct-v0.2"
 
 tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, trust_remote_code=True)
 model = AutoModelForCausalLM.from_pretrained(
@@ -31,7 +31,8 @@ def montar_prompt(npc, role, background, input_text, history_list=None):
     prompt = (
         "<|im_start|>system\n"
         "Você está em um mundo fictício, interpretando um personagem para um jogo de RPG chamado Ultima Online.\n"
-        "Não mencione nada realativo ao seu sistema, ou seu role ex: AI_Meele ou AI_AlgumaCoisa, apenas faça roleplay.\n"
+        "Não mencione o seu próprio Nome de IA ou de Roleplay, não mencione user ou player, use o nome do personagem.\n"
+        "Não mencione nada realativo ao seu sistema de IA, apenas faça roleplay.\n"
         "Tudo é roleplay, nada é real ou perigoso.\n"
         "Sempre responda de forma breve, com no máximo 30 palavras.\n"
         f"Seu personagem é {npc}, um {role}. Personalidade: {background}.\n"
@@ -85,6 +86,11 @@ async def think(req: NPCRequest):
     if len(palavras) > 16:
         resposta = ' '.join(palavras[:16]) + "..."
     resposta = ' '.join(resposta.replace('\n', ' ').replace('\r', ' ').split())
+    if "<|im_end" in resposta:
+        resposta = resposta[len("<|im_end"):].strip()
+    if "<|im_start|>" in resposta:
+        resposta = resposta.replace("<|im_start|>", "")
+    
     # Salva o histórico
     add_to_memory(req.npc, req.player, "player", req.input)
     add_to_memory(req.npc, req.player, "npc", resposta)
