@@ -28,31 +28,25 @@ app = FastAPI()
 
 @app.post("/npc/decide")
 def npc_decide(state: FullNPCState):
-    if state.player_input:
-        # === Caso 1: resposta a uma fala do jogador ===
-        history = get_memory(state.name, state.player_name)
-        prompt = montar_prompt(state.name, state.role, state.background, state.player_input, history)
-        output = generator(prompt, max_new_tokens=60, do_sample=True, temperature=0.9)[0]['generated_text']
-        print("[DEBUG] Resultado gerado:", result)
-        resposta = output[len(prompt):].strip()
-
-        add_to_memory(state.name, state.player_name, "player", state.player_input)
-        add_to_memory(state.name, state.player_name, "npc", resposta)
-
-        return {
-            "type": AIActions.DIZER,
-            "text": resposta
-        }
-    else:
+    try:
         # === Caso 2: IA decide ação autônoma ===
         prompt = montar_prompt_para_acao(state)
-        result = generator(prompt, max_new_tokens=70, do_sample=True, temperature=0.7)[0]['generated_text']
+        result = generator(prompt, max_new_tokens=90, do_sample=True, temperature=0.7)[0]['generated_text']
         print("[DEBUG] Resultado gerado:", result)
         parsed = extrair_acao(result)
         print("[DEBUG] Ação extraída:", parsed)
         return {
-            "type": parsed.get("intention", AIActions.NENHUMA),
+            "type": parsed.get("type", AIActions.NENHUMA),
             "target": parsed.get("target"),
             "say": parsed.get("say"),
             "details": parsed.get("details")
         }
+    except Exception as e:
+        print("[DEBUG] Erro ao decidir ação:", e)
+        return {
+            "type": AIActions.NENHUMA,
+            "target": None,
+            "say": None,
+            "details": "Erro ao decidir ação: " + str(e)
+        }
+
