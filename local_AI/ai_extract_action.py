@@ -39,18 +39,13 @@ def extrair_acao(texto: str) -> dict:
             intent_raw = safe_str(obj.get("intention")).lower()
             if not intent_raw:
                 continue
-            item_raw = safe_str(obj.get("item_name")).lower()
-            if item_raw:
-                item_name = ITEM_MAP.get(item_raw, None)
-            else:
-                item_name = ""
-            print(f"[DEBUG] Item_name: {item_name}")
+
             return {
                 "type": INTENTION_MAP.get(intent_raw, AIActions.NENHUMA),
                 "target": safe_str(obj.get("target")) or None,
                 "say": safe_str(obj.get("say")) or None,
-                "item_amount": safe_str(obj.get("item_amount")),
-                "item_name": item_name,
+                "money_amount": safe_str(obj.get("money_amount")),
+                "item_name": ITEM_MAP.get(safe_str(obj.get("item_name")), None) if obj.get("item_name") in ITEM_MAP else "",
                 "details": " ".join(safe_str(obj.get("details")).split()[:5]) or "Sem detalhes."
             }
 
@@ -63,7 +58,7 @@ def extrair_acao(texto: str) -> dict:
         "type": AIActions.NENHUMA,
         "target": None,
         "say": None,
-        "item_amount": "0",
+        "money_amount": "0",
         "item_name": None,
         "details": "Sem detalhes."
     }

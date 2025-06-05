@@ -10,13 +10,13 @@ def montar_prompt_para_acao(npc: FullNPCState) -> str:
     memoria_txt = "\n".join(f"- {m}" for m in mem_limit)
     npcs_txt = "\n".join(f"- {n.name}, um {n.role}, está {n.mood}" for n in npcs_limit)
     intencoes = [f'"{a.value}"' for a in AIActions if a not in [AIActions.DIZER, AIActions.NENHUMA]]
-    gold = str(npc.item_amount) if npc.item_amount and str(npc.item_amount).isdigit() else "0"
+    gold = str(npc.gold) if npc.gold and str(npc.gold).isdigit() else "0"
 
 
     return (
         f"Você é {npc.name}, um {npc.role} e sua personalidade é {npc.background}. "
         f"Você está se sentindo {npc.mood}.\n\n"
-        f"Você tem {gold} de moedas de ouro.\n\n"
+        f"Você tem {gold} de ouro.\n\n"
         f"Memórias recentes:\n{memoria_txt if memoria_txt else 'Nenhuma.'}\n\n"
         f"NPCs por perto:\n{npcs_txt if npcs_txt else 'Ninguém próximo.'}\n\n"
         f"As únicas intenções permitidas são: {', '.join(intencoes)}\n\n"
@@ -30,7 +30,7 @@ def montar_prompt_para_acao(npc: FullNPCState) -> str:
         "  \"intention\": \"\",\n"
         "  \"target\": \"\",\n"
         "  \"say\": \"\",\n"
-        "  \"item_amount\": \"\",\n"
+        "  \"money_amount\": \"\",\n"
         "  \"item_name\": \"\",\n"
         "  \"details\": \"\"\n"
         "}\n\n"

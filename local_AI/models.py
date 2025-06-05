@@ -16,7 +16,7 @@ class FullNPCState(BaseModel):
     background: str
     location: str
     mood: Optional[str] = "neutro"
-    item_amount: Optional[str] = "0"
+    gold: Optional[str] = "0"
     item_name: Optional[str] = ""
     memory: Optional[List[str]] = []
     nearby_npcs: Optional[List[NearbyNPC]] = []
@@ -27,7 +27,7 @@ class NPCDecision(BaseModel):
     type: AIActions
     target: Optional[str] = ""
     say: Optional[str] = ""
-    item_amount: Optional[str] = "0"
+    money_amount: Optional[str] = "0"
     item_name: Optional[str] = ""
     details: Optional[str] = ""
 

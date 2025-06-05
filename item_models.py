@@ -1,0 +1,48 @@
+from enum import Enum
+
+
+class ItemType(str, Enum):
+    BARDICHE = "bardiche"
+    ARCO = "arco"
+    BESTA = "besta"
+    ADAGA = "adaga"
+    ALABARDA = "alabarda"
+    KATANA = "katana"
+    KRYSS = "kryss"
+    ESPADA = "espada"
+    MACHADO = "machado"
+    PICARETA = "picareta"
+    SIMITARRA = "simitarra"
+    LANCA = "lanca"
+    FOICE = "foice"
+    PORRETE = "porrete"
+    MARRETA = "marreta"
+    BORDAO = "bordao"
+    FACA = "faca"
+    ESCUDO = "escudo"
+    BROQUEL = "broquel"
+    MADEIRA = "madeira"
+    SERRA = "serra"
+    TAMBOR = "tambor"
+    TAMBORIM = "tamborim"
+    HARPA = "harpa"
+    ALAUDE = "alaude"
+    SACOLA = "sacola"
+    BOLSA = "bolsa"
+    MOCHILA = "mochila"
+    COURO = "couro"
+    PAO = "pao"
+    BOLO = "bolo"
+    COOKIES = "cookies"
+    PIZZA = "pizza"
+    BANDAGE = "bandage"
+    BANDAGES = "bandages"
+    SETA = "setas"
+    SETAS = "setas"
+    FLECHA = "flecha"
+    FLECHAS = "flechas"
+    TESOURA = "tesoura"
+
+
+
+

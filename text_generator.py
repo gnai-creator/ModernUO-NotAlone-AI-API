@@ -1,25 +1,24 @@
-import torch
-from transformers import AutoTokenizer, AutoModelForCausalLM
+import os
+from openai import OpenAI
 
-def gerar_texto_com_tolerancia(prompt, tokenizer, model):
+API_KEY = os.getenv("OPENAI_API_KEY")
+
+client = OpenAI(api_key=API_KEY)
+
+def gerar_texto_com_tolerancia(prompt):
     try:
-        prompt = prompt.encode("utf-8", "ignore").decode("utf-8")  # segurança extra
-        inputs = tokenizer(prompt, return_tensors="pt", truncation=True, max_length=8192)
-        inputs = {k: v.to(model.device) for k, v in inputs.items()}
-        
-        output = model.generate(
-            **inputs,
-            max_new_tokens=110,
-            do_sample=False,
-            pad_token_id=tokenizer.eos_token_id
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",  # ou "gpt-3.5-turbo"
+            messages=[
+                {"role": "system", "content": "Você é um NPC que responde em JSON conforme instruções."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.8,
+            max_tokens=300,
         )
 
-        if output is None or len(output) == 0:
-            raise ValueError("Geração vazia.")
-
-        return tokenizer.decode(output[0], skip_special_tokens=True)
+        return response.choices[0].message.content
 
     except Exception as e:
-        print("[DEBUG] Geração falhou:", str(e))
-        raise e
-
+        print("[DEBUG] Erro na API do ChatGPT:", str(e))
+        return '{"intention": "voltar à rotina", "target": "", "say": "Erro interno.", "money_amount": "0", "item_name": "", "details": ""}'
