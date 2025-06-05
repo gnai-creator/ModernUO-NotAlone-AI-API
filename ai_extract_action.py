@@ -6,8 +6,10 @@ def extrair_acao(texto: str) -> dict:
     INTENTION_MAP = {
         # "seguir jogador": AIActions.SEGUIR,
         # "montar cavalo": AIActions.MONTAR_CAVALO,
+        "receber dinheiro": AIActions.PEGAR_DINHEIRO,
         "pegar dinheiro": AIActions.PEGAR_DINHEIRO,
         "dar dinheiro": AIActions.DAR_DINHEIRO,
+        "dar item": AIActions.DAR_ITEM,
         "atacar": AIActions.ATACAR,
         "voltar à rotina": AIActions.ROTINA,
         "voltar a rotina": AIActions.ROTINA,
@@ -48,7 +50,7 @@ def extrair_acao(texto: str) -> dict:
                 "type": INTENTION_MAP.get(intent_raw, AIActions.NENHUMA),
                 "target": obj["target"] or None,
                 "say": obj["say"] or None,
-                "money_amount": obj["money_amount"] or 0,
+                "money_amount": obj["money_amount"] or "0",
                 "details": obj["details"] or "Sem detalhes."
             }
 
@@ -58,6 +60,6 @@ def extrair_acao(texto: str) -> dict:
                 "type": AIActions.NENHUMA,
                 "target": None,
                 "say": None,
-                "money_amount": 0,
+                "money_amount": "0",
                 "details": "Sem detalhes."
             }
