@@ -27,12 +27,14 @@ class NPCDecision(BaseModel):
     target: Optional[str] = None
     say: Optional[str] = None
     money_amount: Optional[str] = "0"
+    item: Optional[str] = None
     details: Optional[str] = None
 
 class NPCState(BaseModel):
     npc_id: str
     name: str
     role: str
+    background: str
     location: str
     mood: Optional[str] = "neutro"
     memory: Optional[List[str]] = []

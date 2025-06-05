@@ -10,6 +10,7 @@ def extrair_acao(texto: str) -> dict:
         "pegar dinheiro": AIActions.PEGAR_DINHEIRO,
         "dar dinheiro": AIActions.DAR_DINHEIRO,
         "dar item": AIActions.DAR_ITEM,
+        "pegar item": AIActions.PEGAR_ITEM,
         "atacar": AIActions.ATACAR,
         "voltar à rotina": AIActions.ROTINA,
         "voltar a rotina": AIActions.ROTINA,
@@ -40,7 +41,7 @@ def extrair_acao(texto: str) -> dict:
             if intent_raw == "":
                 continue
 
-            for campo in ["target", "say", "money_amount", "details"]:
+            for campo in ["target", "say", "money_amount", "item", "details"]:
                 obj[campo] = obj.get(campo, "").strip()
 
             if len(obj["details"].split()) > 5:
@@ -51,6 +52,7 @@ def extrair_acao(texto: str) -> dict:
                 "target": obj["target"] or None,
                 "say": obj["say"] or None,
                 "money_amount": obj["money_amount"] or "0",
+                "item": obj["item"] or None,
                 "details": obj["details"] or "Sem detalhes."
             }
 
@@ -61,5 +63,6 @@ def extrair_acao(texto: str) -> dict:
                 "target": None,
                 "say": None,
                 "money_amount": "0",
+                "item": None,
                 "details": "Sem detalhes."
             }

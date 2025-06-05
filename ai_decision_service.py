@@ -51,7 +51,7 @@ def npc_decide(state: FullNPCState):
     try:
         # === Caso 2: IA decide ação autônoma ===
         prompt = montar_prompt_para_acao(state)
-        result = generator(prompt, max_new_tokens=90, do_sample=True, temperature=0.7)[0]['generated_text']
+        result = generator(prompt, max_new_tokens=100, do_sample=True, temperature=0.7)[0]['generated_text']
         print("[DEBUG] Resultado gerado:", result)
         parsed = extrair_acao(result)
         print("[DEBUG] Ação extraída:", parsed["type"])

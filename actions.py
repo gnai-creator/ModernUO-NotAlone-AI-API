@@ -7,6 +7,7 @@ class AIActions(str, Enum):
     PEGAR_DINHEIRO = "pegar dinheiro"
     DAR_DINHEIRO = "dar dinheiro"
     DAR_ITEM = "dar item"
+    PEGAR_ITEM = "pegar item"
     ATACAR = "atacar"
     ROTINA = "voltar à rotina"
     DIZER = "Say"
