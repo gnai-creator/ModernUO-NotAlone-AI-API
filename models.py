@@ -17,6 +17,7 @@ class FullNPCState(BaseModel):
     location: str
     mood: Optional[str] = "neutro"
     gold: Optional[str] = "0"
+    item_name: Optional[str] = None
     memory: Optional[List[str]] = []
     nearby_npcs: Optional[List[NearbyNPC]] = []
     player_input: Optional[str] = None
