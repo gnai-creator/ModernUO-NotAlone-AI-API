@@ -1,7 +1,7 @@
-from models import NPCState
+from models import FullNPCState
 from actions import AIActions
 
-def montar_prompt_para_acao(npc: NPCState) -> str:
+def montar_prompt_para_acao(npc: FullNPCState) -> str:
     memoria_txt = "\n".join(f"- {m}" for m in npc.memory)
     npcs_txt = "\n".join(f"- {n.name}, um {n.role}, está {n.mood}" for n in npc.nearby_npcs)
     intencoes = [f'"{a.value}"' for a in AIActions if a not in [AIActions.DIZER, AIActions.NENHUMA]]
@@ -16,7 +16,7 @@ def montar_prompt_para_acao(npc: NPCState) -> str:
         f"O jogador {npc.player_name} está em {npc.location} e fala: {npc.player_input}.\n\n"
         "Sua resposta DEVE SER APENAS UM BLOCO JSON, SEM EXEMPLOS EXTRAS, SEM TEXTO EXPLICATIVO.\n"
         "NÃO USE COLCHETES NO JSON, APENAS CHAVES E VALORES.\n"
-        "Preencha todos os campos obrigatoriamente. NÃO adicione alternativas de blocos. NÃO escreva múltiplos blocos json.\n\n"
+        "Preencha TODOS OS CAMPOS OBRIGATORIAMENTE. NAO adicione alternativas de blocos. NÃO escreva múltiplos blocos json.\n\n"
         "O campo details é opcional, mas só pode conter até 5 palavras.\n\n"
         "{\n"
         "  \"intention\": \"\",\n"
