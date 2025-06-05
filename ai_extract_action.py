@@ -4,9 +4,10 @@ def extrair_acao(texto: str) -> dict:
     from actions import AIActions
 
     INTENTION_MAP = {
-        "seguir jogador": AIActions.SEGUIR,
+        # "seguir jogador": AIActions.SEGUIR,
+        # "montar cavalo": AIActions.MONTAR_CAVALO,
+        "pegar dinheiro": AIActions.PEGAR_DINHEIRO,
         "dar dinheiro": AIActions.DAR_DINHEIRO,
-        "montar cavalo": AIActions.MONTAR_CAVALO,
         "atacar": AIActions.ATACAR,
         "voltar à rotina": AIActions.ROTINA,
         "voltar a rotina": AIActions.ROTINA,
@@ -37,7 +38,7 @@ def extrair_acao(texto: str) -> dict:
             if intent_raw == "":
                 continue
 
-            for campo in ["target", "say", "details"]:
+            for campo in ["target", "say", "money_amount", "details"]:
                 obj[campo] = obj.get(campo, "").strip()
 
             if len(obj["details"].split()) > 5:
@@ -47,15 +48,16 @@ def extrair_acao(texto: str) -> dict:
                 "type": INTENTION_MAP.get(intent_raw, AIActions.NENHUMA),
                 "target": obj["target"] or None,
                 "say": obj["say"] or None,
+                "money_amount": obj["money_amount"] or 0,
                 "details": obj["details"] or "Sem detalhes."
             }
 
         except Exception:
-            continue
-
-    return {
-        "type": AIActions.NENHUMA,
-        "target": None,
-        "say": None,
-        "details": "Sem detalhes."
-    }
+            print(f"Erro ao extrair ação: {texto}")
+            return {
+                "type": AIActions.NENHUMA,
+                "target": None,
+                "say": None,
+                "money_amount": 0,
+                "details": "Sem detalhes."
+            }

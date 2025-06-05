@@ -2,9 +2,10 @@
 from enum import Enum
 
 class AIActions(str, Enum):
-    SEGUIR = "seguir jogador"
+    # SEGUIR = "seguir jogador"
+    # MONTAR_CAVALO = "montar cavalo"
+    PEGAR_DINHEIRO = "pegar dinheiro"
     DAR_DINHEIRO = "dar dinheiro"
-    MONTAR_CAVALO = "montar cavalo"
     ATACAR = "atacar"
     ROTINA = "voltar à rotina"
     DIZER = "Say"
