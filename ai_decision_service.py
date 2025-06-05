@@ -39,7 +39,15 @@ def npc_decide(state: FullNPCState):
     try:
         # === Caso 2: IA decide ação autônoma ===
         prompt = montar_prompt_para_acao(state)
-        result = gerar_texto_com_tolerancia(prompt, generator)
+        
+        tokens = tokenizer(prompt, return_tensors="pt").input_ids
+        print(f"[DEBUG] Tamanho do prompt: {tokens.shape[-1]} tokens.")
+        print(f"[DEBUG] Tokens de entrada: {tokens[0].tolist()}")
+
+        result = gerar_texto_com_tolerancia(prompt, tokenizer, model)
+        if not result or not isinstance(result, str):
+            raise ValueError("Resultado da geração está vazio ou inválido.")
+
         print("[DEBUG] Resultado gerado:", result)
         parsed = extrair_acao(result)
         print("[DEBUG] Ação extraída:", parsed["type"])

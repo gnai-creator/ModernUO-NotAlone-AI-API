@@ -1,15 +1,22 @@
 from models import FullNPCState
 from actions import AIActions
 
+
 def montar_prompt_para_acao(npc: FullNPCState) -> str:
-    memoria_txt = "\n".join(f"- {m}" for m in npc.memory)
-    npcs_txt = "\n".join(f"- {n.name}, um {n.role}, está {n.mood}" for n in npc.nearby_npcs)
+    # Limita memória e npcs antes de gerar string
+    mem_limit = npc.memory[-5:] if npc.memory else []
+    npcs_limit = npc.nearby_npcs[:3] if npc.nearby_npcs else []
+
+    memoria_txt = "\n".join(f"- {m}" for m in mem_limit)
+    npcs_txt = "\n".join(f"- {n.name}, um {n.role}, está {n.mood}" for n in npcs_limit)
     intencoes = [f'"{a.value}"' for a in AIActions if a not in [AIActions.DIZER, AIActions.NENHUMA]]
+    gold = str(npc.gold) if npc.gold and str(npc.gold).isdigit() else "0"
+
 
     return (
         f"Você é {npc.name}, um {npc.role} e sua personalidade é {npc.background}. Você está localizado em {npc.location}. "
         f"Você está se sentindo {npc.mood}.\n\n"
-        f"Você tem {npc.gold} de ouro.\n\n"
+        f"Você tem {gold} de ouro.\n\n"
         f"Memórias recentes:\n{memoria_txt if memoria_txt else 'Nenhuma.'}\n\n"
         f"NPCs por perto:\n{npcs_txt if npcs_txt else 'Ninguém próximo.'}\n\n"
         f"As únicas intenções permitidas são: {', '.join(intencoes)}\n\n"
@@ -28,4 +35,3 @@ def montar_prompt_para_acao(npc: FullNPCState) -> str:
         "}\n\n"
         "Complete esse único JSON com a ação apropriada."
     )
-
