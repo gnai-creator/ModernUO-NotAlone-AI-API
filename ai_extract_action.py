@@ -41,7 +41,7 @@ def extrair_acao(texto: str) -> dict:
             if intent_raw == "":
                 continue
 
-            for campo in ["target", "say", "money_amount", "item", "details"]:
+            for campo in ["target", "say", "money_amount", "item_name", "details"]:
                 obj[campo] = obj.get(campo, "").strip()
 
             if len(obj["details"].split()) > 5:
@@ -52,7 +52,7 @@ def extrair_acao(texto: str) -> dict:
                 "target": obj["target"] or None,
                 "say": obj["say"] or None,
                 "money_amount": obj["money_amount"] or "0",
-                "item": obj["item"] or None,
+                "item_name": obj["item_name"] or None,
                 "details": obj["details"] or "Sem detalhes."
             }
 
@@ -63,6 +63,6 @@ def extrair_acao(texto: str) -> dict:
                 "target": None,
                 "say": None,
                 "money_amount": "0",
-                "item": None,
+                "item_name": None,
                 "details": "Sem detalhes."
             }

@@ -27,7 +27,7 @@ class NPCDecision(BaseModel):
     target: Optional[str] = None
     say: Optional[str] = None
     money_amount: Optional[str] = "0"
-    item: Optional[str] = None
+    item_name: Optional[str] = None
     details: Optional[str] = None
 
 class NPCState(BaseModel):

@@ -23,7 +23,7 @@ def montar_prompt_para_acao(npc: NPCState) -> str:
         "  \"target\": \"\",\n"
         "  \"say\": \"\",\n"
         "  \"money_amount\": \"\",\n"
-        "  \"item\": \"\",\n"
+        "  \"item_name\": \"\",\n"
         "  \"details\": \"\"\n"
         "}\n\n"
         "Complete esse único JSON com a ação apropriada."
