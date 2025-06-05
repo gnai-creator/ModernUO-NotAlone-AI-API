@@ -60,6 +60,7 @@ def npc_decide(state: FullNPCState):
             "target": parsed.get("target"),
             "say": parsed.get("say"),
             "money_amount": parsed.get("money_amount"),
+            "item": parsed.get("item"),
             "details": parsed.get("details")
         }
     except Exception as e:
@@ -68,7 +69,8 @@ def npc_decide(state: FullNPCState):
             "type": AIActions.NENHUMA,
             "target": None,
             "say": None,
-            "money_amount": 0,
+            "money_amount": "0",
+            "item": None,
             "details": "Erro ao decidir ação: " + str(e)
         }
 
