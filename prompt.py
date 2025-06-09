@@ -24,7 +24,6 @@ def montar_prompt_para_acao(npc: FullNPCState) -> str:
         "Sua resposta DEVE SER APENAS UM BLOCO JSON, SEM EXEMPLOS EXTRAS, SEM TEXTO EXPLICATIVO.\n"
         "NÃO USE COLCHETES NO JSON, APENAS CHAVES E VALORES.\n"
         "Preencha TODOS OS CAMPOS OBRIGATORIAMENTE. NAO adicione alternativas de blocos. NÃO escreva múltiplos blocos json.\n\n"
-        "O campo details só pode conter até 5 palavras.\n\n"
         "Responda SOMENTE com o seguinte JSON válido, COM TODAS AS CHAVES E VALORES preenchidos:\n"
         "{\n"
         "  \"intention\": \"\",\n"
@@ -32,7 +31,6 @@ def montar_prompt_para_acao(npc: FullNPCState) -> str:
         "  \"say\": \"\",\n"
         "  \"item_amount\": \"\",\n"
         "  \"item_name\": \"\",\n"
-        "  \"details\": \"\"\n"
         "}\n\n"
         "Complete esse único JSON com a ação apropriada COM TODAS AS CHAVES E VALORES preenchidos:\n"
     )
